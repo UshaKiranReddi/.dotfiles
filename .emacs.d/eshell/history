@@ -1,0 +1,10 @@
+ls
+cd dox
+ls
+ls -la
+ls
+a.out 
+gcc main.cpp 
+ls
+cd
+ls

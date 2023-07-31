@@ -1,0 +1,759 @@
+#+TITLE: Ushakiran's GNU Emacs Config
+#+Author: ukiran
+#+DESCRIPTION: ukiran's personal Emacs config
+#+STARTUP: showeverything
+* Startup performance
+** Make startup faster by reducing the frequency of garbage collection and then use a hook to measure Emacs startup time.
+#+begin_src emacs-lisp
+;; The default is 800 kilobytes.  Measured in bytes.
+(setq gc-cons-threshold (* 50 1000 1000))
+
+;; Profile emacs startup
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (message "*** Emacs loaded in %s with %d garbage collections."
+                     (format "%.2f seconds"
+                             (float-time
+                              (time-subtract after-init-time before-init-time)))
+                     gcs-done)))
+  #+end_src
+* Keep .emacs.d Clean
+** I don't want a bunch of transient files showing up as untracked in the Git repo so I move them all to another location.
+#+begin_src emacs-lisp
+
+  
+#+end_src
+
+* hl-todo
+#+begin_src emacs-lisp
+  (use-package hl-todo)
+  (setq hl-todo-keyword-faces
+	'(("TODO"   . "#FF0000")
+	  ("FIXME"  . "#FF0000")
+	  ("DEBUG"  . "#A020F0")
+	  ("GOTCHA" . "#FF4500")
+	  ("STUB"   . "#1E90FF")))
+
+#+end_src
+* Fonts
+#+begin_src emacs-lisp
+  ;; Set the fixed pitch face
+;;(add-to-list 'default-frame-alist
+  ;;           '(font . "JetBrains Mono-14"))
+#+end_src
+* Emojis in buffers
+#+begin_src emacs-lisp
+
+
+  
+  (use-package emojify
+    :hook (erc-mode . emojify-mode)
+    :commands emojify-mode)
+
+#+end_src
+* optional minor settings
+** for back-up and auto-save
+#+begin_src emacs-lisp
+(setq make-backup-file nil)
+(setq auto-save-default nil)
+#+end_src
+** better looks and functionality
+*** highlights the cursor line
+#+begin_src emacs-lisp
+  (when window-system (global-hl-line-mode t))
+#+end_src
+
+*** pretty symbols
+#+begin_src emacs-lisp
+  (when window-system (global-prettify-symbols-mode t))
+#+end_src
+
+*** y-or-n instead of yes-or-no
+#+begin_src emacs-lisp
+  (defalias 'yes-or-no-p 'y-or-n-p)
+#+end_src
+
+*** parens
+#+begin_src emacs-lisp
+  (show-paren-mode 1)
+#+end_src
+
+** menubar and toolbar and scroolbar (i dont like them much)
+#+begin_src emacs-lisp
+  (tool-bar-mode -1)
+  (menu-bar-mode -1)
+  (scroll-bar-mode -1)
+  (tooltip-mode -1)           ; Disable tooltips
+  (set-fringe-mode 10)        ; Give some breathing room
+#+end_src
+
+** visible-bell
+#+begin_src emacs-lisp
+  ;; Set up the visible bell
+  (setq visible-bell t)  
+#+end_src
+** kill whole word
+#+begin_src emacs-lisp
+  (defun kill-whole-word ()
+    (interactive)
+    (backward-word)
+     (kill-word 1))
+  (global-set-key (kbd "C-x w w") 'kill-whole-word)
+#+end_src
+
+** Hungry Delete
+#+begin_src emacs-lisp
+  (use-package hungry-delete
+    :ensure t
+    :config (global-hungry-delete-mode))
+  #+end_src
+  
+** lines and columns
+#+begin_src emacs-lisp
+  (line-number-mode 1)
+  (column-number-mode)
+  
+
+  ;; Enable line numbers for some modes
+  (dolist (mode '(text-mode-hook
+		  prog-mode-hook
+		  conf-mode-hook))
+    (add-hook mode (lambda () (display-line-numbers-mode 1))))
+
+  ;; Override some modes which derive from the above
+  (dolist (mode '(org-mode-hook
+		  dashboard-hook
+		  term-mode-hook
+		  shell-mode-hook
+		  eshell-mode-hook
+		  ansi-term-mode-hook))
+    (add-hook mode (lambda () (display-line-numbers-mode 0))))
+#+end_src
+
+** copy whole line
+#+begin_src emacs-lisp
+  (defun copy-whole-line ()
+    (interactive)
+    (save-excursion
+      (kill-new
+       (buffer-substring
+	(point-at-bol)
+	(point-at-eol)))))
+  (global-set-key (kbd "C-c l l") 'copy-whole-line)
+#+end_src
+
+** Clock
+#+begin_src emacs-lisp
+  (setq display-time-format "%I:%M %p - %d %B %Y")
+  (display-time-mode 1)
+#+end_src
+
+** Battery indicator
+#+begin_src emacs-lisp
+
+  (use-package fancy-battery
+    :ensure t
+    :config
+      (setq fancy-battery-show-percentage t)
+      (setq battery-update-interval 15)
+      (if window-system
+	(fancy-battery-mode)
+	(display-battery-mode)))
+#+end_src
+* which-key
+#+begin_src emacs-lisp
+  (use-package which-key
+  :ensure t
+  :init (which-key-mode)
+  :diminish which-key-mode
+  :config
+  (setq which-key-idle-delay 0.3))
+#+end_src
+
+* Electric-pair
+#+begin_src emacs-lisp
+  (setq electric-pair-pairs '(
+			      (?\( . ?\))
+			      (?\[ . ?\])
+			      (?\{ . ?\})
+			      ))
+  (electric-pair-mode t)
+  #+end_src
+
+* popup killring
+** a clipboard manager in emacs
+#+begin_src emacs-lisp
+  (use-package popup-kill-ring
+    :ensure t
+    :bind ("M-y" . popup-kill-ring))
+  
+#+end_src
+* eshell toggle
+#+begin_src emacs-lisp
+
+(use-package eshell-toggle
+  :bind ("C-M-'" . eshell-toggle)
+  :custom
+  (eshell-toggle-size-fraction 3)
+  (eshell-toggle-use-projectile-root t)
+  (eshell-toggle-run-command nil))
+  
+#+end_src
+* theme
+#+begin_src emacs-lisp
+
+ (use-package doom-themes
+  :if window-system
+  :ensure t
+  :config
+  ;; Enable the theme
+  (load-theme 'doom-city-lights t))
+
+;;(use-package doom-themes
+  ;;:config
+  ;;(load-theme 'doom-city-lights t))
+#+end_src
+* sudo edit (permissions)
+#+begin_src emacs-lisp
+  (use-package sudo-edit
+    :ensure t
+    :bind ("s-e" . sudo-edit))
+#+end_src
+  
+* Terminal
+** setting the default shell as bash
+#+begin_src emacs-lisp
+(defvar my-term-shell "/bin/bash")
+(defadvice ansi-term (before force-bash)
+   (interactive (list my-term-shell)))
+(ad-activate 'ansi-term)
+(global-set-key (kbd "<C-c return>") 'ansi-term)
+#+end_src
+
+* Org
+** Org-mode
+#+begin_src emacs-lisp
+    (use-package org
+      :config
+      (setq org-ellipsis " ▾"
+           org-hide-emphasis-markers nil)) 
+
+#+end_src
+** Org bullets
+#+begin_src emacs-lisp
+  (require 'cl-lib)
+
+  (use-package org-bullets
+    :ensure t
+    :config
+    (add-hook 'org-mode-hook (lambda() (org-bullets-mode 1))))
+#+end_src
+** org-temp (its not default so.)
+*** when you type "<s tab" it changes to source tags
+#+begin_src emacs-lisp
+    (when (version<= "9.2" (org-version))
+    (require 'org-tempo))
+#+end_src
+** emacs-lisp code
+*** makes easy to config
+#+begin_src emacs-lisp
+(setq org-src-tab-acts-natively t)
+(defun insert-emacs-lisp-block ()
+  "Insert an Emacs Lisp source block."
+  (interactive)
+  (insert "#+begin_src emacs-lisp\n\n#+end_src")
+  (forward-line -1))
+(define-abbrev org-mode-abbrev-table "els" "" 'insert-emacs-lisp-block)
+(add-hook 'org-mode-hook (lambda () (abbrev-mode 1)))
+#+end_src
+** Org-agenda
+#+begin_src emacs-lisp
+
+  (setq org-agenda-files (append
+			  (file-expand-wildcards "~/dox/org/*.org")))
+#+end_src
+
+* Modeline (moodline)
+#+begin_src emacs-lisp
+    ;;  (use-package minions
+    ;;  :hook
+    ;;  (doom-modeline-mode . minions-mode))
+
+    (use-package doom-modeline
+      ;;fter eshell     ;; Make sure it gets hooked after eshell
+      :ensure t
+      :config
+      (doom-modeline-mode 1))
+;;      :custom-face
+ ;;     (mode-line ((t (:height 0.85))))
+  ;;    (mode-line-inactive ((t (:height 0.85)))))
+  ;;    :custom
+    ;;  (doom-modeline-height 15)
+  ;;    (doom-modeline-bar-width 6)
+    ;;  (doom-modeline-lsp t)
+  ;;    (doom-modeline-github nil)
+    ;;  (doom-modeline-mu4e nil)
+  ;;    (doom-modeline-irc nil)
+  ;;    (doom-modeline-minor-modes t)
+  ;;    (doom-modeline-persp-name nil)
+  ;;    (doom-modeline-buffer-file-name-style 'truncate-except-project)
+  ;;    (doom-modeline-major-mode-icon nil))
+
+
+
+#+end_src
+
+* IDO mode
+** enable ido mode
+#+begin_src emacs-lisp
+ ;; (setq ido-enable-flex-matching nil)
+ ;; (setq ido-create-new-buffer 'always)
+ ;; (setq ido-everywhere t)
+ ;;(ido-mode 1)
+#+end_src
+
+** ido-vertical (its good)
+#+begin_src emacs-lisp
+  (use-package ido-vertical-mode
+    :ensure t
+    :custom
+    (vertico-cycle t)
+    :init
+    (ido-vertical-mode 1))
+#+end_src
+*** save history
+#+begin_src emacs-lisp
+
+  (use-package savehist
+    :init
+    (savehist-mode))
+
+#+end_src
+*** shows some deatils of the file
+#+begin_src emacs-lisp
+
+  
+(use-package marginalia
+  :after vertico
+  :ensure t
+  :custom
+  (marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil))
+  :init
+  (marginalia-mode))
+#+end_src
+* Smex
+#+begin_src emacs-lisp
+;;  (use-package smex
+  ;;  :ensure t
+ ;;   :init (smex-initialize)
+  ;;  :bind
+   ;; ("M-x" . smex))
+#+end_src
+
+* Dashboard
+#+begin_src emacs-lisp
+  (use-package dashboard
+    :ensure t
+    :config
+    (dashboard-setup-startup-hook)
+    (setq dashboard-center-content t)
+    (setq dashboard-startup-banner "~/.emacs.d/avatar.png")
+    (setq dashboard-items '((recents  . 5) (bookmarks . 5) (agenda . 5))))
+    (setq dashboard-banner-logo-title "Hey Ushakiran, Just do it!")
+
+
+#+end_src
+
+* Buffers
+** enable ibuffer
+#+begin_src emacs-lisp
+ ;; (global-set-key (kbd "C-x b") 'ibuffer)
+#+end_src
+;; replaced by Vertico
+
+** switch-buffers
+#+begin_src emacs-lisp
+ ;; (global-set-key (kbd "C-x C-b") 'ido-switch-buffer)
+#+end_src
+;; replaced by Vertico
+
+** kill current buffer (always)
+#+begin_src emacs-lisp
+  (defun kill-curr-buffer ()
+    (interactive)
+    (kill-buffer (current-buffer)))
+  (global-set-key (kbd "C-x k") 'kill-curr-buffer)
+#+end_src
+
+** kill all buffers (OMG)
+#+begin_src emacs-lisp
+  (defun kill-all-buffers ()
+    (interactive)
+    (mapc 'kill-buffer (buffer-list)))
+  (global-set-key (kbd "C-M-s-k") 'kill-all-buffers)
+#+end_src
+
+* isearch (meh)
+#+begin_src emacs-lisp
+
+  ;; Unbind keybindings for isearch;;(global-unset-key (kbd "C-s"))
+  ;;global-unset-key (kbd "C-r"))
+
+#+end_src
+* Ivy
+
+#+begin_src emacs-lisp
+ (use-package ivy
+      :diminish
+    :bind (("C-s" . swiper)
+	   :map ivy-minibuffer-map
+	   ("TAB" . ivy-alt-done)	
+           ("C-l" . ivy-alt-done)
+	   ("C-j" . ivy-next-line)
+	   ("C-k" . ivy-previous-line)
+	   :map ivy-switch-buffer-map
+	   ("C-k" . ivy-previous-line)
+	   ("C-l" . ivy-done)
+	   ("C-d" . ivy-switch-buffer-kill)
+	   :map ivy-reverse-i-search-map
+	   ("C-k" . ivy-previous-line)
+	   ("C-d" . ivy-reverse-i-search-kill))
+    :config
+    (ivy-mode 1))
+  #+end_src
+* Vertico
+#+begin_src emacs-lisp
+
+
+  (use-package vertico
+ ;;   :bind (:map vertico-map
+;;	 ("C-j" . vertico-next)
+;;	 ("C-k" . vertico-previous)
+;;	 ("C-f" . vertico-exit)
+;;	 :map minibuffer-local-map
+;;	 ("M-h" . dw/minibuffer-backward-kill))
+    :custom
+    (vertico-cycle t)
+    :custom-face
+    (vertico-current ((t (:background "#3a3f5a"))))
+    :init
+    (vertico-mode))
+#+end_src
+* avy
+#+begin_src emacs-lisp
+(use-package avy
+  :ensure t
+  :bind
+    ("M-s" . avy-goto-char))
+  
+#+end_src
+* smart parens
+#+begin_src emacs-lisp
+(use-package smartparens
+  :hook (prog-mode . smartparens-mode))
+  
+#+end_src
+* rainbow
+** rainbow-mode
+#+begin_src emacs-lisp
+  (use-package rainbow-mode
+  :ensure t
+  :init
+    (add-hook 'prog-mode-hook 'rainbow-mode))
+#+end_src
+
+** rainbow-delimiters
+#+begin_src emacs-lisp
+  (use-package rainbow-delimiters
+  :ensure t
+  :init
+    (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
+#+end_src
+
+* config edit-&-reload
+** config-edit
+#+begin_src emacs-lisp
+(defun config-visit ()
+  (interactive)
+  (find-file "~/.emacs.d/config.org"))
+(global-set-key (kbd "C-c e") 'config-visit)
+  #+end_src
+  
+** config-reload
+#+begin_src emacs-lisp
+  (defun config-reload ()
+    (interactive)
+    (org-babel-load-file (expand-file-name "~/.emacs.d/config.org")))
+  (global-set-key (kbd "C-c r") 'config-reload)
+#+end_src
+
+* Highlight Indent Guides
+#+begin_src emacs-lisp
+  (use-package highlight-indent-guides
+   :ensure t
+   :defer t
+   :hook (prog-mode . highlight-indent-guides-mode)
+   :config
+   (setq highlight-indent-guides-method 'character)
+   (setq highlight-indent-guides-character ?\|)
+   (setq highlight-indent-guides-responsive 'top))
+#+end_src
+
+* Windows
+** switch-window (cursor to)
+#+begin_src emacs-lisp
+  (use-package switch-window
+    :ensure t
+    :config
+    (setq switch-window-input-style 'minibuffer)
+    (setq switch-window-increase 4)
+    (setq switch-window-threshold 2)
+    (setq switch-window-shortcut-style 'qwerty)
+    (setq switch-window-qwerty-shortcuts
+	  '("a" "s" "d" "f" "j" "k" "l"))
+    :bind
+    ([remap other-window] . switch-window))
+#+end_src
+
+** window spliting function
+#+begin_src emacs-lisp
+  (defun split-and-follow-horizontally ()
+    (interactive)
+    (split-window-below)
+    (balance-windows)
+    (other-window 1))
+  (global-set-key (kbd "C-x 2") 'split-and-follow-horizontally)
+
+  (defun split-and-follow-vertically ()
+    (interactive)
+    (split-window-right)
+    (balance-windows)
+    (other-window 1))
+  (global-set-key (kbd "C-x 3") 'split-and-follow-vertically)
+#+end_src
+
+* Auto completion
+#+begin_src emacs-lisp
+  (use-package company
+    :ensure t
+    :config
+    (add-hook 'after-init-hook 'global-company-mode))
+#+end_src
+
+* IDE Feartures
+** Centaur tabs
+#+begin_src emacs-lisp
+
+  (use-package centaur-tabs
+  :if window-system
+  :defer t
+  :demand
+  :init
+  ;; Set the style to rounded with icons
+  (setq centaur-tabs-style "bar")
+  (setq centaur-tabs-set-icons t)
+
+  :config
+  ;; Enable centaur-tabs
+  (centaur-tabs-mode t))
+#+end_src
+** Treemacs
+#+begin_src emacs-lisp
+(use-package treemacs
+  :ensure t
+  :defer t
+  :bind
+  (("C-c t" . treemacs))
+  :config
+  (setq treemacs-width 30)
+  (setq-local mode-line-format nil))
+  
+#+end_src
+
+** Projectile
+#+begin_src emacs-lisp
+(use-package projectile
+  :ensure t
+  :defer t
+  :config
+  ;; Enable Projectile globally
+  (setq projectile-completion-system 'ido)
+  (setq ido-enable-flex-matching t)
+  (projectile-mode 1))
+  
+#+end_src
+
+* snippets
+#+begin_src emacs-lisp
+  (use-package yasnippet-snippets
+    :hook (prog-mode . yas-minor-mode)
+    :config
+    (yas-reload-all))
+
+#+end_src
+* Advance IDE Features
+** Emacs LSP
+#+begin_src emacs-lisp
+(use-package lsp-mode
+  :ensure t
+  :defer t
+  :init
+  (setq lsp-keymap-prefix "C-c l")
+  :config
+  (setq lsp-headerline-breadcrumb-enable nil))
+  
+#+end_src
+*** LSP UI
+#+begin_src emacs-lisp
+    (use-package lsp-ui
+      :ensure t
+      :defer t)
+
+#+end_src
+
+** DAP mode (debugging)
+#+begin_src emacs-lisp
+(use-package dap-mode
+  :after lsp-mode
+  :ensure t
+  :defer t)
+  
+#+end_src
+* Languages
+** Web (html/css/js)
+*** web-mode
+#+begin_src emacs-lisp
+
+  (use-package web-mode
+  :ensure t
+  :defer t
+  :config
+  (setq
+   web-mode-markup-indent-offset 2
+   web-mode-css-indent-offset 2
+   web-mode-code-indent-offset 2
+   web-mode-style-padding 2
+   web-mode-script-padding 2
+   web-mode-enable-auto-closing t
+   web-mode-enable-auto-opening t
+   web-mode-enable-auto-pairing t
+   web-mode-enable-auto-indentation t)
+  :mode
+  (".html$" "*.php$" "*.tsx"))
+#+end_src
+** emmet-mode
+#+begin_src emacs-lisp
+(use-package emmet-mode
+  :ensure t
+  :defer t)
+  
+#+end_src
+** Typescript
+*** tide-mode
+#+begin_src emacs-lisp
+
+  (use-package tide
+  :ensure t
+  :defer t
+  :config
+  (setq company-tooltip-align-annotations t)
+  (add-hook 'before-save-hook 'tide-format-before-save))
+(add-hook 'typescript-mode-hook #'setup-tide-mode)
+
+(defun setup-tide-mode ()
+  "Set up Tide mode."
+  (interactive)
+  (tide-setup)
+  (flycheck-mode +1)
+  (setq flycheck-check-syntax-automatically '(save-mode-enabled))
+  (eldoc-mode +1)
+  (tide-hl-identifier-mode +1)
+  (company-mode +1))
+#+end_src
+*** TSX
+#+begin_src emacs-lisp
+(add-hook 'web-mode-hook
+	    (lambda ()
+	      (when (string-equal "tsx" (file-name-extension buffer-file-name))
+		(setup-tide-mode))))
+  
+#+end_src
+** Python
+*** lsp-pyright
+#+begin_src emacs-lisp
+
+  (use-package lsp-pyright
+  :ensure t
+  :defer t
+  :hook (python-mode . (lambda ()
+			   (setq indent-tabs-mode t)
+			   (setq tab-width 4)
+			   (setq python-indent-offset 4)
+			   (company-mode 1)
+			   (require 'lsp-pyright)
+			   (pyvenv-autoload)
+			   (lsp))))
+#+end_src
+*** Virtual Envinronment
+#+begin_src emacs-lisp
+
+  (use-package pyvenv
+  :ensure t
+  :defer t)  
+#+end_src
+#+begin_src emacs-lisp
+
+  (defun pyvenv-autoload ()
+  (require 'pyvenv)
+  (require 'projectile)
+  (interactive)
+  "auto activate venv directory if exists"
+  (f-traverse-upwards (lambda (path)
+			  (let ((venv-path (f-expand "env" path)))
+			    (when (f-exists? venv-path)
+			      (pyvenv-activate venv-path))))))
+(add-hook 'python-mode 'pyvenv-autoload)
+#+end_src
+
+* Git Integration
+** Magit
+#+begin_src emacs-lisp
+
+  (use-package magit
+  :ensure t
+  :defer t)
+#+end_src
+* Misc
+** Locales
+#+begin_src emacs-lisp
+
+  (setq locale-coding-system 'utf-8)
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+(set-selection-coding-system 'utf-8)
+(prefer-coding-system 'utf-8)
+#+end_src
+* Calfw
+#+begin_src emacs-lisp
+  
+(use-package calfw
+  :disabled
+  :commands cfw:open-org-calendar
+  :config
+  (setq cfw:fchar-junction ?╋
+        cfw:fchar-vertical-line ?┃
+        cfw:fchar-horizontal-line ?━
+        cfw:fchar-left-junction ?┣
+        cfw:fchar-right-junction ?┫
+        cfw:fchar-top-junction ?┯
+        cfw:fchar-top-left-corner ?┏
+        cfw:fchar-top-right-corner ?┓)
+
+  (use-package calfw-org
+    :config
+    (setq cfw:org-agenda-schedule-args '(:timestamp))))
+
+;;(dw/leader-key-def
+ ;; "cc"  '(cfw:open-org-calendar :which-key "calendar"))
+
+#+end_src

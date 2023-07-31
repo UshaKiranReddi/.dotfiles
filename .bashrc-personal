@@ -1,0 +1,76 @@
+export EDITOR='lvim'
+export VISUAL='lvim'
+
+#------------------------------------------------------------------
+# USHAKIRAN personal alias
+alias xbh="xrandr --output HDMI-1-0 --brightness"
+alias ctcap="setxkbmap -option ctrl:nocaps"
+#alias keys="xev | awk -F'[ )]+' '/^KeyPress/ { a[NR+2] } NR in a { printf "%-3s %s\n", $5, $8 }'"
+
+# protonVPN
+alias vpnstat="protonvpn-cli status"
+alias vpncon="protonvpn-cli connect"
+alias vpndiscon="protonvpn-cli disconnect"
+
+
+# dotfiles
+alias dots="cd ~/.dotfiles/" 
+
+
+
+#alias emacs="emacsclient -c -a 'emacs'"
+
+alias monmain="xrandr --output HDMI-1-0 --auto --primary & xrandr --output eDP-1 --off"
+alias lapmain="xrandr --output eDP-1 --auto --primary & xrandr --output HDMI-1-0 --off"
+
+#mpv fullscreen problem
+alias mpv="mpv --fs"
+
+alias rso="redshift -O"
+alias rsx="redshift -x"
+alias lsmount="mount | column -t"
+
+# For checking virtually
+alias Xep="Xephyr -br -ac -noreset -screen 1280x720 :1 &"
+alias Xqt="DISPLAY=:1 qtile start"
+alias kX="killall Xephyr"
+
+alias vi="lvim"
+alias ttyc="tty-clock -cst"
+
+
+alias ys="yay -Q | grep"
+
+#alias lsl="ls -al"
+# Changing "ls" to "exa"
+alias ls='exa --icons -al --color=always --group-directories-first' # my preferred listing
+alias la='exa --icons -a --color=always --group-directories-first'  # all files and dirs
+alias ll='exa --icons -l --color=always --group-directories-first'  # long format
+alias lt='exa -aT --color=always --group-directories-first' # tree listing
+alias l.='exa -a | egrep "^\."'
+#------------------------------------------------------------------
+
+alias nqtile="~/.config/qtile/"
+alias cp="cp -iv"
+
+#terminal fun
+alias matrix='unimatrix -s 96 -l k -c magenta'
+
+# LOCAL MANUALS
+alias uman-rust="rustup docs --book"
+
+
+# Git
+alias gstatus="git status"
+alias gpush="git push origin"
+alias gpull="git pull origin"
+alias gcommit="git commit -m"
+alias gadd="git add"
+#alias gitname="git config --global user.name "Us""
+alias ginit="git init"
+alias gremote="git remote add origin"
+alias gconfig="/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME"
+
+
+
+

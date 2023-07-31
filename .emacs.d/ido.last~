@@ -1,0 +1,38 @@
+;;; -*- coding: utf-8 -*-
+
+;; ----- ido-last-directory-list -----
+(
+ ("/home/ukiran/.emacs.d/" . "calfw/")
+ ("/home/ukiran/" . "dox/")
+)
+
+;; ----- ido-work-directory-list -----
+(
+ "/home/ukiran/.emacs.d/"
+ "/home/ukiran/dox/"
+)
+
+;; ----- ido-work-file-list -----
+(
+ "config.el"
+ "init.el"
+ "config.org"
+ "july-02.org"
+ "july-02.txt"
+)
+
+;; ----- ido-dir-file-cache -----
+(
+ ("/home/ukiran/.emacs.d/" (25796 39591 990831 746000) "ido.last" "../" "avatar.png" "elpa/" "./" "init.el~" "config.org" "config.org~" "bookmarks" "auto-save-list/" "smex-items" "ido.last~" "config.el" "converted.gif" "transient/" "recentf" "abbrev_defs" "calfw/" "site-lisp/" "init.el" "diary" ".cache/" "eshell/")
+
+ ("/home/ukiran/" (25796 30901 713601 887000) ".gnupg/" ".vscode/" "Pictures/" "../" ".cert/" "code/" ".bash_profile" ".xsessionrc" ".emacs.d/" "C++/" "./" ".bashrc-personal" ".yt-local/" ".dmrc" ".local/" ".cargo/" "Videos/" ".xsession" "Deepu-eamcet dox/" ".rustup/" ".bash_history" ".mpd/" "books/" ".mozilla/" ".screenrc" ".pki/" "notes/" ".xinitrc" "makemacs.org" ".bin/" ".gnome/" ".googleearth/" ".nv/" "yt-local/" ".npm/" "Documents/" "Desktop/" "Music/" "Downloads/" "doom's.org" "go/" ".gtkrc-2.0" ".gitconfig" ".Xresources" "tmp/" ".var/" "dox/" ".bashrc" ".cache/" ".config/" ".viminfo" "test.org" ".zcompdump-arch-5.9")
+
+ ("/home/ukiran/.config/" (25795 61302 795455 397000) "Google/" "arcolinux-welcome-app/" "protonvpn/" "dconf/" "xfce4/" "cava/" "nnn/" "catfish/" "../" "Trolltech.conf" "sublime-text/" "nano/" "archlinux-betterlockscreen/" "Thunar/" "discord/" "./" "archlinux-tweak-tool/" "pavucontrol.ini" "neofetch/" "fish/" "nomacs/" "gconf/" "volumeicon/" "yad.conf" "gitahead.com/" "nitrogen/" "zathura/" "rofi/" "pulse/" "archlinux-logout/" "procps/" "mpv/" "Code/" "qalculate/" "user-dirs.dirs" "bashtop/" "fontconfig/" "gtk-3.0/" "autostart/" "okularrc" "qt5ct/" "ristretto/" "libreoffice/" "yay/" "mimeapps.list" "gpick/" "paru/" "qBittorrent/" "htop/" "alacritty/" "plank/" "user-dirs.locale" "pamac/" "betterlockscreenrc" "variety/" "gtk-2.0/" "lvim/" "galculator/" "systemd/" "menus/" "init.el" "calcure/" "qtile/" "arcolinux-logo/" "pragha/" "conky/" "vlc/" "Kvantum/")
+
+ ("/home/ukiran/.emacs.d/calfw/" (25791 38635 286806 823000) "../" "./")
+
+ ("/home/ukiran/dox/" (25791 35801 690085 34000) "../" "./" "july-02.org" "org/" "Econfig-notes.org" "july-02.org~" "Econfig-notes.org~")
+)
+
+;; ----- ido-unc-hosts-cache -----
+t

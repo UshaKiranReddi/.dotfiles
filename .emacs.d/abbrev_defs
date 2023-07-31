@@ -1,0 +1,8 @@
+;;-*-coding: utf-8;-*-
+(define-abbrev-table 'org-mode-abbrev-table
+  '(
+    ("-els" "" insert-emacs-lisp-block :count 0)
+    ("<els" "" insert-emacs-lisp-block :count 0)
+    ("els" "" insert-emacs-lisp-block :count 3)
+   ))
+

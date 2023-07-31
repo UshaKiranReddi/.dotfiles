@@ -1,0 +1,27 @@
+
+;; ----- smex-history -----
+(
+ calendar-end-of-week
+ bookmark-locate
+ bookmark-save
+ ansi-term
+ compile
+ eshell
+ doom-modeline-mode
+)
+
+;; ----- smex-data -----
+(
+ (package-refresh-contents . 1)
+ (eval-buffer . 5)
+ (package-install . 1)
+ (load-theme . 2)
+ (customize-themes . 1)
+ (doom-modeline-mode . 4)
+ (eshell . 1)
+ (ansi-term . 4)
+ (compile . 3)
+ (bookmark-save . 1)
+ (bookmark-locate . 1)
+ (calendar-end-of-week . 1)
+)
